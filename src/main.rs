@@ -5,20 +5,21 @@ use std::fs;
 use std::process::Command;
 
 fn main() -> Result<()> {
-    let folder_path = "C:\\ExcelDrop";  // Folder you’ll drop Excel files into
+    let folder_path: PathBuf = dirs::desktop_dir()
+        .expect("Could not find desktop directory")
+        .join("ExcelDrop"); //folder where your folder is created
 
-    // Create the folder if it doesn't exist
-    if !Path::new(folder_path).exists() {
-        fs::create_dir(folder_path)?;
-        println!("Created folder: {}", folder_path);
+    if !folder_path.exists() {
+        fs::create_dir(&folder_path)?;
+        println!("Created folder at: {:?}", folder_path);
     }
 
-    println!("🔍 Watching folder: {}", folder_path);
+    println!("🔍 Watching folder: {:?}", folder_path);
 
     // Create channel and watcher
     let (tx, rx) = channel();
     let mut watcher: RecommendedWatcher = notify::recommended_watcher(tx)?;
-    watcher.watch(Path::new(folder_path), RecursiveMode::NonRecursive)?;
+    watcher.watch(&folder_path, RecursiveMode::NonRecursive)?;
 
     // Listen for new files
     for event in rx {
