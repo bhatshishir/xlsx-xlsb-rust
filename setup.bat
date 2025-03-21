@@ -1,0 +1,6 @@
+@echo off
+echo Installing required Python modules...
+pip install pywin32 >nul 2>&1
+
+echo Starting ExcelWatcher...
+start "" "%ProgramFiles%\ExcelWatcher\excel-watcher.exe"
